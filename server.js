@@ -81,7 +81,7 @@ app.post('/createUser', function (req, res) {
           }
         })
       } else {
-        res.status(401).send('Sorry, a user with that name already exists');
+        res.status(200).send('Sorry, a user with that name already exists');
       }
     })
 })

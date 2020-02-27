@@ -53,8 +53,13 @@ class NameForm extends React.Component {
         event.preventDefault();
         await instance.post('/createUser', { email: this.state.email, password: this.state.password, username: this.state.username })
             .then((res) => {
-                console.log(res, "this is user res");
-                this.setState({ userCreated: true, showModal: true });
+                console.log(res, "resssss")
+                if (res.data === "Sorry, a user with that name already exists") {
+                    this.setState({showModal: true, modalText: "Username already exists. Please login or create a unique username" });
+                }
+                if (res.statusText === "Created") {
+                    this.setState({userCreated: true, showModal: true, modalText: "User created. Click the home button to head to main page" });
+                }
                 console.log(this.state, "state")
             })
     }
@@ -97,7 +102,7 @@ class NameForm extends React.Component {
                     <Modal.Header closeButton>
                         <Modal.Title>Modal heading</Modal.Title>
                     </Modal.Header>
-                    <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+                    <Modal.Body>{this.state.modalText}</Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.handleCloseModal}>
                             Close
