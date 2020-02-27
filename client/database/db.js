@@ -26,7 +26,6 @@ var userSchema = mongoose.Schema({
         type: String,
         required: true
     }
-    //maybe add other things here
 });
 var User = mongoose.model('User', userSchema);
 

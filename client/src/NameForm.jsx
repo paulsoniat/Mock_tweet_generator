@@ -13,11 +13,14 @@ class NameForm extends React.Component {
         this.state = { 
             email: '',
             password: '',
+            username: '',
         };
 
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
         this.handleEmailChange = this.handleEmailChange.bind(this);
         this.handleNewUser = this.handleNewUser.bind(this);
+        this.handleUsernameChange = this.handleUsernameChange.bind(this)
+        this.handleExistingUser = this.handleExistingUser.bind(this)
     }
 
     handlePasswordChange(event) {
@@ -28,9 +31,13 @@ class NameForm extends React.Component {
         this.setState({ email: event.target.value });
     }
 
+    handleUsernameChange(event) {
+        this.setState({ username: event.target.value });
+    }
+
     handleNewUser(event) {
         event.preventDefault();
-        axios.post('/createUser', {email: this.state.email, password: this.state.password})
+        instance.post('/createUser', {email: this.state.email, password: this.state.password, username: this.state.username})
         .then((res) => {
             console.log(res, "this is user res");
         })   
@@ -38,18 +45,10 @@ class NameForm extends React.Component {
 
     handleExistingUser(event) {
         event.preventDefault();
-        axios.post('/loginUser', {email: this.state.email, password: this.state.password})
+        axios.post('/loginUser', {email: this.state.email, password: this.state.password, username: this.state.username})
         .then((res) => {
             console.log(res, "this is user res");
         })  
-    } 
-
-        handleTweets(event) {
-            event.preventDefault();
-            axios.post('/tweetme')
-            .then((res) => {
-                console.log(res, "this is user res");
-            })   
     }
 
     /*
@@ -80,17 +79,19 @@ class NameForm extends React.Component {
         return (
             <div>
                 <label>
-                    Email:
-                    <input type="text" value={this.state.email} onChange={this.handleEmailChange} />
+                    Username:
+                    <input type="text" value={this.state.username} onChange={this.handleUsernameChange} />
                 </label>
                 <label>
                     Password:
                     <input type="text" value={this.state.password} onChange={this.handlePasswordChange} />
                 </label>
+                <label>
+                    Email:
+                    <input type="text" value={this.state.email} onChange={this.handleEmailChange} />
+                </label>
                 <button onClick={this.handleExistingUser}> Login </button>
                 <button onClick={this.handleNewUser}> Create Account </button>
-
-                <button onClick={this.handleTweets}> Create tweets </button>
             </div>
         );
     }
