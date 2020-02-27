@@ -58,7 +58,7 @@ app.post('/tweetMe', (req, res) => {
 })
 
 app.post('/createUser', function (req, res) {
-  console.log(req, "request")
+  console.log(req.body, "request")
   const tokenData = {
     email: req.body.email,
     password: req.body.password,
@@ -87,6 +87,7 @@ app.post('/createUser', function (req, res) {
 })
 
 app.post('/loginUser', function (req, res) {
+  console.log(req.body, "request login")
   db.User.findOne({
       email: req.body.email
     })
