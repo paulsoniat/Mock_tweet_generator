@@ -1,6 +1,9 @@
 import React from 'react';
 import axios from 'axios';
-import {Button, Modal} from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
+require('react-dom');
+window.React2 = require('react');
+console.log(window.React1 === window.React2);
 
 const instance = axios.create({
     baseURL: 'http://localhost:5000/',
@@ -16,19 +19,29 @@ class NameForm extends React.Component {
             email: '',
             password: '',
             username: '',
+            passwordCorrect: '',
             userCreated: false,
+            userExists: true,
+
+            //modal logic should be broken
             showModal: false,
+
+            //show modal state here
         };
 
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
         this.handleEmailChange = this.handleEmailChange.bind(this);
         this.handleNewUser = this.handleNewUser.bind(this);
-        this.handleUsernameChange = this.handleUsernameChange.bind(this);   
+        this.handleUsernameChange = this.handleUsernameChange.bind(this);
         this.handleExistingUser = this.handleExistingUser.bind(this);
+
+        //modal logic - should be broken out
         this.handleCloseModal = this.handleCloseModal.bind(this);
         this.handleOpenModal = this.handleOpenModal.bind(this);
     }
 
+
+    //modal logic
     handleOpenModal() {
         this.setState({ showModal: true });
     }
@@ -55,24 +68,28 @@ class NameForm extends React.Component {
             .then((res) => {
                 console.log(res, "resssss")
                 if (res.data === "Sorry, a user with that name already exists") {
-                    this.setState({showModal: true, modalText: "Username already exists. Please login or create a unique username" });
+                    this.setState({ userExists: true, showModal: true, modalText: "Username already exists. Please login or create a unique username" });
                 }
                 if (res.statusText === "Created") {
-                    this.setState({userCreated: true, showModal: true, modalText: "User created. Click the home button to head to main page" });
+                    this.setState({ userCreated: true, showModal: true, modalText: "User created. Click the home button to head to main page" });
                 }
-                console.log(this.state, "state")
             })
     }
 
-    handleExistingUser(event) {
+    async handleExistingUser(event) {
         event.preventDefault();
-        axios.post('/loginUser', { email: this.state.email, password: this.state.password, username: this.state.username })
+        await instance.post('/loginUser', { email: this.state.email, password: this.state.password, username: this.state.username })
             .then((res) => {
                 console.log(res, "this is user res");
             })
     }
-    
+
     render() {
+
+        const userCreated = this.state.userCreated;
+        const userExists = this.state.userCreated;
+        const passwordCorrect = this.state.userCreated;
+
         return (
             <div>
                 <label>
@@ -91,7 +108,7 @@ class NameForm extends React.Component {
                 </label>
 
                 <button onClick={this.handleExistingUser}>
-                    Login
+                    Login (Needs DB uniques)
                 </button>
 
                 <button onClick={this.handleNewUser}>
@@ -99,18 +116,61 @@ class NameForm extends React.Component {
                 </button>
 
                 <Modal show={this.state.showModal} onHide={this.handleCloseModal}>
+
                     <Modal.Header closeButton>
-                        <Modal.Title>Modal heading</Modal.Title>
+                        <Modal.Title>Login Status</Modal.Title>
                     </Modal.Header>
+
                     <Modal.Body>{this.state.modalText}</Modal.Body>
+
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={this.handleCloseModal}>
-                            Close
-                        </Button>
-                        <Button variant="primary" onClick={this.handleCloseModal}>
-                            Save Changes
-                        </Button>
+
+                        {this.state.userCreated ? (
+                            <Button variant="primary" onClick={this.handleCloseModal}>
+                                Home    
+                            </Button>
+                        ) : (
+                            <Button variant="primary" onClick={this.handleCloseModal}>
+                                Retry
+                            </Button>
+                            )
+                        };
+
+                        {this.state.userExists && this.state.passwordCorrect != true ? (
+                            <Button variant="secondary" onClick={this.handleCloseModal}>
+                                Retry
+                            </Button>
+                        ) : (
+                            <Button variant="primary" onClick={this.handleCloseModal}>
+                                Home
+                            </Button>
+                            )
+                        };
+
+                        {this.state.userCreated ? (
+                            <Button variant="secondary" onClick={this.handleCloseModal}>
+                                Retry
+                            </Button>
+                        ) : (
+                            <Button variant="primary" onClick={this.handleCloseModal}>
+                                Home
+                            </Button>
+                            )
+                        };
+
+                        {this.state.userCreated ? (
+                            <Button variant="secondary" onClick={this.handleCloseModal}>
+                                Retry
+                            </Button>
+                        ) : (
+                            <Button variant="primary" onClick={this.handleCloseModal}>
+                                Home
+                            </Button>
+                            )
+                        };
+
                     </Modal.Footer>
+
                 </Modal>
 
             </div>

@@ -93,13 +93,15 @@ app.post('/loginUser', function (req, res) {
     })
     .then((user) => {
       if (user.password !== req.body.password) {
-        res.send('Sorry, that password was incorrect');
+        let userPasswordCorrect = false;
+        res.status(200).send('Sorry, that password was incorrect', userPasswordCorrect);
       } else {
         const tokenData = {
           id: user._id,
           username: user.username,
         };
         const token = jwt.sign(tokenData, 'secret');
+        console.log(token)
         res.status(201).send(token);
       }
     })
